@@ -1,11 +1,10 @@
-import Form from "./component/Form"
-
+import React from 'react'
+import RegistrationForm from './component/forms/RegistrationForm'
 function App() {
-
   return (
-    <>  
-    <Form/>
-    </>
+    <div>
+      <RegistrationForm/>
+    </div>
   )
 }
 
