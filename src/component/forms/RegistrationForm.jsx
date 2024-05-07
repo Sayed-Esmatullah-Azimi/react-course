@@ -1,20 +1,46 @@
 import { Card } from 'react-bootstrap'
+import { useState } from 'react';
 import { useForm } from 'react-hook-form'
+import Posts from '../../views/posts/posts.page';
 function RegistrationForm() {
+    const [isLoading, setIsLoading] = useState(false);
         const {
-            register, formState: { errors }, handleSubmit
+            register, reset, formState: { errors }, handleSubmit
           } = useForm();
        
-        const onSubmit = (data) => {
-            console.log(data);
-        }
+        const onSubmit = async (data) => {
+          try {
+            setIsLoading(true);
+           const apiData = await fetch("https://jsonplaceholder.typicode.com/posts",{
+                method: 'POST',
+                body: JSON.stringify( {
+                  "userId": 1,
+                  "id": 1,
+                  "title": data.email,
+                  "body": data.password,
+                }),
+               
+            })
+      .then(response => response.json())
+      .then((json)=>json);
+            if(apiData){
+              reset();
+            }   
+          }
+          catch(error){
+            // console.log(error);
+          }   
+          finally {
+            setIsLoading(false);
+          }
+        };
   return (
     <div>
        <br /><br />
       <Card border="danger" className='mx-auto' style={{ width: '20rem'}}>
         <Card.Header>Registration Form</Card.Header>
         <Card.Body>
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit((data)=>onSubmit(data))}>
             <label htmlFor="">Name:</label>
             <input type="text" name='name' className='form-control' placeholder='enter the name'
             {...register("name", {
@@ -75,10 +101,12 @@ function RegistrationForm() {
         </span>
       )}
             <br />
-            <button className='btn btn-primary'>Submit</button>
+            <button disabled={isLoading} type='submit' className='btn btn-primary'>Submit</button>
           </form>
         </Card.Body>
       </Card>
+            <br />
+            <Posts/>
     </div>
   )
 } 
